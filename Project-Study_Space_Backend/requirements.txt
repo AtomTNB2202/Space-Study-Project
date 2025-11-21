@@ -1,0 +1,57 @@
+# =============================================================================
+# CORE FRAMEWORK
+# =============================================================================
+fastapi==0.115.0                # Web framework chính
+uvicorn[standard]==0.32.0       # ASGI server (chạy FastAPI)
+
+# =============================================================================
+# DATABASE (PostgreSQL)
+# =============================================================================
+sqlalchemy==2.0.36              # ORM để thao tác database
+alembic==1.14.0                 # Database migrations (thay đổi schema)
+psycopg2-binary==2.9.10         # PostgreSQL driver (sync)
+asyncpg==0.30.0                 # PostgreSQL driver (async - optional)
+
+# =============================================================================
+# VALIDATION & SETTINGS
+# =============================================================================
+pydantic==2.9.2                 # Data validation (tự động kiểm tra input)
+pydantic-settings==2.6.1        # Quản lý settings từ .env
+email-validator==2.2.0          # Validate email addresses
+
+# =============================================================================
+# SECURITY & AUTHENTICATION
+# =============================================================================
+python-jose[cryptography]==3.3.0   # JWT token generation
+passlib[bcrypt]==1.7.4             # Hash passwords an toàn
+python-multipart==0.0.17           # Parse form data (cho OAuth2)
+bcrypt==4.2.1                      # Bcrypt hashing algorithm
+
+# =============================================================================
+# REDIS (Caching)
+# =============================================================================
+redis==5.2.0                    # Redis client
+hiredis==3.0.0                  # C parser cho Redis (tăng tốc)
+
+# =============================================================================
+# UTILITIES
+# =============================================================================
+python-dotenv==1.0.1            # Load .env file
+python-dateutil==2.9.0          # Parse dates dễ dàng hơn
+
+# =============================================================================
+# TESTING
+# =============================================================================
+pytest==8.3.3                   # Test framework
+pytest-asyncio==0.24.0          # Test async functions
+pytest-cov==6.0.0               # Code coverage reports
+httpx==0.27.2                   # HTTP client cho tests
+faker==33.1.0                   # Generate fake data cho tests
+
+# =============================================================================
+# DEVELOPMENT TOOLS
+# =============================================================================
+black==24.10.0                  # Code formatter
+flake8==7.1.1                   # Code linter (kiểm tra lỗi)
+mypy==1.13.0                    # Type checking
+pre-commit==4.0.1               # Git hooks để check code trước commit

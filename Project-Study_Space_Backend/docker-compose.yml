@@ -2,17 +2,86 @@ version: "3.9"
 
 services:
   postgres:
-    image: postgres:16
+    image: postgres:15-alpine
     container_name: studyspace_db
-    restart: always
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin123
-      POSTGRES_DB: studyspace
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin123}
+      POSTGRES_DB: ${POSTGRES_DB:-studyspace}
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=en_US.UTF-8"
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin} -d ${POSTGRES_DB:-studyspace}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - studyspace_network
+
+  postgres_test:
+    image: postgres:15-alpine
+    container_name: studyspace_db_test
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin123}
+      POSTGRES_DB: studyspace_test
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin} -d studyspace_test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - studyspace_network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: studyspace_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - studyspace_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: studyspace_redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - studyspace_network
+
+networks:
+  studyspace_network:
+    driver: bridge
 
 volumes:
   postgres_data:
+  postgres_test_data:
+  pgadmin_data:
+  redis_data:
