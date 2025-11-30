@@ -135,3 +135,9 @@ CREATE TABLE utilities (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
 );
+
+CREATE TABLE space_utilities (
+    space_id INT REFERENCES spaces(id) ON DELETE CASCADE,
+    utility_id INT REFERENCES utilities(id) ON DELETE CASCADE,
+    PRIMARY KEY (space_id, utility_id)
+);
