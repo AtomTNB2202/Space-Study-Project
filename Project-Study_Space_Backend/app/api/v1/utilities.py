@@ -68,10 +68,7 @@ def delete_utility(
     if not db_utility:
         raise HTTPException(404, "Utility not found")
 
-    # Optionally check: utility có đang được dùng trong Space không?
-    # TODO: bạn muốn mình viết check này?
-    # if utility.key in protected_keys:
-    #     raise HTTPException(400, "This utility is used by system and cannot be deleted")
 
     crud_utility.delete_utility(db, db_utility)
     return Response(status_code=204)
+
