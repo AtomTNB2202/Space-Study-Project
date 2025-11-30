@@ -1,7 +1,8 @@
 # app/models/utility.py
 from sqlalchemy import Column, Integer, String, Text, DateTime, func
 from app.core.database import Base
-
+from sqlalchemy.orm import relationship
+from app.models.space import space_utilities
 
 class Utility(Base):
     __tablename__ = "utilities"
@@ -25,3 +26,9 @@ class Utility(Base):
 
     def __repr__(self) -> str:
         return f"<Utility id={self.id} key={self.key}>"
+    
+    spaces = relationship(
+    "Space",
+    secondary= space_utilities,
+    back_populates="utilities",
+)
