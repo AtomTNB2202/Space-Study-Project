@@ -6,12 +6,29 @@ from sqlalchemy import (
     Float,
     DateTime,
     func,
+    ForeignKey,
+    Table
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from app.core.database import Base
 
+# ======================================================
+# ASSOCIATION TABLE Space <-> Utility (ONE AND ONLY)
+# ======================================================
+
+space_utilities = Table(
+    "space_utilities",
+    Base.metadata,
+    Column("space_id", Integer, ForeignKey("spaces.id", ondelete="CASCADE"), primary_key=True),
+    Column("utility_id", Integer, ForeignKey("utilities.id", ondelete="CASCADE"), primary_key=True),
+)
+
+
+# ======================================================
+# SPACE MODEL
+# ======================================================
 
 class Space(Base):
     __tablename__ = "spaces"
@@ -35,7 +52,7 @@ class Space(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    # Booking relationship
+    # Relations
     bookings = relationship(
         "Booking",
         back_populates="space",
@@ -43,7 +60,6 @@ class Space(Base):
         lazy="selectin",
     )
 
-    # ⭐ ADD THIS (bạn bị thiếu)
     ratings = relationship(
         "Rating",
         back_populates="space",
@@ -51,3 +67,10 @@ class Space(Base):
         lazy="selectin",
     )
 
+    # ⭐ Correct Many-to-Many
+    utilities = relationship(
+        "Utility",
+        secondary=space_utilities,
+        back_populates="spaces",
+        lazy="selectin",
+    )
